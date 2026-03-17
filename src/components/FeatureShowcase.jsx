@@ -810,29 +810,25 @@ const demos = [
 ]
 
 export default function FeatureShowcase() {
-  const scrollRef = useRef(null)
-  const [canScrollLeft, setCanScrollLeft] = useState(false)
-  const [canScrollRight, setCanScrollRight] = useState(true)
+  const ref = useRef(null)
+  const [vis, setVis] = useState({})
 
-  const checkScroll = () => {
-    const el = scrollRef.current
-    if (!el) return
-    setCanScrollLeft(el.scrollLeft > 10)
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10)
-  }
-
-  useEffect(() => { checkScroll() }, [])
-
-  const scroll = (dir) => {
-    const el = scrollRef.current
-    if (!el) return
-    el.scrollBy({ left: dir * 400, behavior: 'smooth' })
-  }
+  useEffect(() => {
+    const els = ref.current?.querySelectorAll('.fs-section')
+    if (!els) return
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) setVis(p => ({ ...p, [e.target.dataset.idx]: true }))
+      })
+    }, { threshold: 0.15 })
+    els.forEach(el => obs.observe(el))
+    return () => obs.disconnect()
+  }, [])
 
   return (
-    <section id="features" style={{ padding: '100px 0 80px' }}>
+    <section id="features" ref={ref} style={{ padding: '100px 0 40px' }}>
       {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: 48, padding: '0 48px' }}>
+      <div style={{ textAlign: 'center', marginBottom: 80, padding: '0 48px' }}>
         <div style={{
           fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.25em',
           color: 'var(--brand)', marginBottom: 16,
@@ -845,90 +841,102 @@ export default function FeatureShowcase() {
           fontFamily: 'var(--font-ui)', fontSize: 16, lineHeight: 1.7,
           color: 'var(--text2)', maxWidth: 520, margin: '0 auto',
         }}>
-          Don't take our word for it. Click, type, drag — every demo below is a working miniature of features we've built.
+          Don't take our word for it. Click, type, drag — every demo below is real working software.
         </p>
       </div>
 
-      {/* Scroll container */}
-      <div style={{ position: 'relative' }}>
-        {/* Arrows */}
-        {canScrollLeft && (
-          <button onClick={() => scroll(-1)} style={arrowStyle('left')}>&#8249;</button>
-        )}
-        {canScrollRight && (
-          <button onClick={() => scroll(1)} style={arrowStyle('right')}>&#8250;</button>
-        )}
-
-        {/* Fade edges */}
-        {canScrollLeft && <div style={{ ...fadeEdge, left: 0, background: 'linear-gradient(to right, #04040c, transparent)' }} />}
-        {canScrollRight && <div style={{ ...fadeEdge, right: 0, background: 'linear-gradient(to left, #04040c, transparent)' }} />}
-
-        <div ref={scrollRef} onScroll={checkScroll} style={{
-          display: 'flex', gap: 24, overflowX: 'auto', padding: '0 48px 24px',
-          scrollSnapType: 'x mandatory',
-          scrollbarWidth: 'none', msOverflowStyle: 'none',
-        }}>
-          {/* Hide scrollbar via inline style */}
-          <style>{`#feature-scroll::-webkit-scrollbar { display: none; }`}</style>
-
-          {demos.map((demo, i) => (
-            <div key={i} style={{
-              flex: '0 0 380px', scrollSnapAlign: 'start',
-              background: 'rgba(255,255,255,0.015)',
-              border: '1px solid rgba(255,255,255,0.05)',
-              borderRadius: 16, overflow: 'hidden',
-              transition: 'transform 0.3s, box-shadow 0.3s',
-            }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.3)' }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
-            >
-              {/* Card header */}
-              <div style={{ padding: '16px 20px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 16, color: 'var(--text)', fontWeight: 500 }}>{demo.title}</div>
-                </div>
-                <span style={{
-                  fontSize: 8, fontFamily: 'var(--font-mono)', letterSpacing: '0.1em',
-                  color: 'var(--brand)', background: 'rgba(212,175,55,0.08)',
-                  padding: '3px 8px', borderRadius: 4,
-                }}>{demo.tag}</span>
-              </div>
-
-              {/* Demo */}
-              <div style={{ padding: '0 12px' }}>
-                <demo.Component />
-              </div>
-
-              {/* Bullets */}
-              <div style={{ padding: '14px 20px 18px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+      {/* Full-width alternating sections */}
+      {demos.map((demo, i) => {
+        const isEven = i % 2 === 0
+        const visible = vis[i]
+        return (
+          <div key={i} className="fs-section" data-idx={i} style={{
+            maxWidth: 1100, margin: '0 auto', padding: '0 48px 80px',
+            display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48,
+            alignItems: 'center',
+            direction: isEven ? 'ltr' : 'rtl',
+            opacity: visible ? 1 : 0,
+            transform: visible ? 'translateY(0)' : 'translateY(40px)',
+            transition: 'opacity 0.8s cubic-bezier(.16,1,.3,1), transform 0.8s cubic-bezier(.16,1,.3,1)',
+          }}>
+            {/* Text side */}
+            <div style={{ direction: 'ltr' }}>
+              <span style={{
+                fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.2em',
+                color: 'var(--brand)', padding: '4px 10px', borderRadius: 4,
+                background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.12)',
+              }}>{demo.tag}</span>
+              <h3 style={{
+                fontFamily: 'var(--font-display)', fontSize: 'clamp(24px, 3vw, 36px)',
+                fontWeight: 400, color: 'var(--text)', margin: '16px 0 12px',
+                lineHeight: 1.15,
+              }}>{demo.title}</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
                 {demo.bullets.map(b => (
                   <div key={b} style={{
-                    fontSize: 11, color: 'var(--text2)', fontFamily: 'var(--font-ui)',
-                    display: 'flex', alignItems: 'center', gap: 6,
+                    fontSize: 14, color: 'var(--text2)', fontFamily: 'var(--font-ui)',
+                    display: 'flex', alignItems: 'flex-start', gap: 10, lineHeight: 1.5,
                   }}>
-                    <span style={{ color: 'var(--brand)', fontSize: 8 }}>&#10070;</span>
+                    <span style={{ color: 'var(--brand)', fontSize: 12, marginTop: 3, flexShrink: 0 }}>✦</span>
                     {b}
                   </div>
                 ))}
               </div>
+              <div style={{
+                fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em',
+                color: 'var(--muted)', paddingTop: 8, borderTop: '1px solid rgba(255,255,255,0.04)',
+              }}>
+                ↑ Try it — this demo is fully interactive
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
+
+            {/* Demo side */}
+            <div style={{ direction: 'ltr' }}>
+              <div style={{
+                borderRadius: 14, overflow: 'hidden',
+                border: '1px solid rgba(255,255,255,0.08)',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.03)',
+                transition: 'transform 0.3s, box-shadow 0.3s',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 30px 80px rgba(0,0,0,0.5)' }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.4)' }}
+              >
+                {/* Browser chrome */}
+                <div style={{
+                  background: '#1a1a2e', padding: '8px 14px',
+                  display: 'flex', alignItems: 'center', gap: 10,
+                }}>
+                  <div style={{ display: 'flex', gap: 5 }}>
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#FF5F57' }} />
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#FFBD2E' }} />
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#28C840' }} />
+                  </div>
+                  <div style={{
+                    flex: 1, background: 'rgba(255,255,255,0.06)', borderRadius: 6,
+                    padding: '4px 12px', fontFamily: 'var(--font-mono)', fontSize: 9,
+                    color: '#555', textAlign: 'center',
+                  }}>yoursite.com/{demo.tag.toLowerCase().replace(/\s+/g, '-')}</div>
+                </div>
+                {/* Demo content */}
+                <div style={{ minHeight: 300 }}>
+                  <demo.Component />
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      })}
+
+      <style>{`
+        @media (max-width: 768px) {
+          .fs-section {
+            grid-template-columns: 1fr !important;
+            direction: ltr !important;
+            gap: 24px !important;
+            padding: 0 20px 60px !important;
+          }
+        }
+      `}</style>
     </section>
   )
-}
-
-const arrowStyle = (side) => ({
-  position: 'absolute', top: '50%', [side]: 12, transform: 'translateY(-50%)',
-  zIndex: 10, width: 40, height: 40, borderRadius: '50%',
-  background: 'rgba(4,4,12,0.9)', border: '1px solid rgba(255,255,255,0.1)',
-  backdropFilter: 'blur(10px)', color: 'var(--text)', fontSize: 22,
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  cursor: 'pointer', transition: 'all 0.2s',
-  boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
-})
-
-const fadeEdge = {
-  position: 'absolute', top: 0, bottom: 24, width: 48, zIndex: 5, pointerEvents: 'none',
 }
