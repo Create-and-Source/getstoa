@@ -97,11 +97,53 @@ const navS = {
 /* ══════════════════════════════════════════════════════
    MAIN PAGE
    ══════════════════════════════════════════════════════ */
+const EDIT_KEY = 'stoa_edits'
+const COLOR_KEY = 'stoa_color'
+
+function loadEdits() { try { return JSON.parse(localStorage.getItem(EDIT_KEY)) || {} } catch { return {} } }
+function saveEdits(e) { localStorage.setItem(EDIT_KEY, JSON.stringify(e)) }
+
 export default function StoaHome({ onBuild }) {
   const [heroVis, setHeroVis] = useState(false)
   const [heroVidLoaded, setHeroVidLoaded] = useState(false)
+  const [editMode, setEditMode] = useState(false)
+  const [edits, setEdits] = useState(loadEdits)
+  const [brandColor, setBrandColor] = useState(() => localStorage.getItem(COLOR_KEY) || '#D4AF37')
+  const [showColorPicker, setShowColorPicker] = useState(false)
 
   useEffect(() => { setTimeout(() => setHeroVis(true), 300) }, [])
+  useEffect(() => { saveEdits(edits) }, [edits])
+  useEffect(() => {
+    localStorage.setItem(COLOR_KEY, brandColor)
+    document.documentElement.style.setProperty('--brand', brandColor)
+  }, [brandColor])
+
+  // Editable text component — wraps any text element
+  const E = ({ id, children, tag: Tag = 'span', style = {} }) => {
+    const savedText = edits[id]
+    if (!editMode) return <Tag style={style}>{savedText || children}</Tag>
+    return (
+      <Tag
+        contentEditable
+        suppressContentEditableWarning
+        style={{
+          ...style,
+          outline: `2px dashed ${brandColor}55`,
+          outlineOffset: 4,
+          cursor: 'text',
+          borderRadius: 4,
+          transition: 'outline-color 0.2s',
+        }}
+        onFocus={e => e.target.style.outlineColor = brandColor}
+        onBlur={e => {
+          e.target.style.outlineColor = `${brandColor}55`
+          const text = e.target.innerText
+          if (text !== children) setEdits(prev => ({ ...prev, [id]: text }))
+        }}
+        dangerouslySetInnerHTML={{ __html: savedText || (typeof children === 'string' ? children : '') }}
+      />
+    )
+  }
 
   /* Animated headline words */
   const words = [
@@ -132,7 +174,7 @@ export default function StoaHome({ onBuild }) {
             transition: 'all 0.9s cubic-bezier(.16,1,.3,1)',
             transitionDelay: '0.2s',
           }}>
-            THE SELLER'S PLATFORM
+            <E id="hero-tag">THE SELLER'S PLATFORM</E>
           </div>
           <h1 style={hero.h1}>
             {words.map((w, i) => (
@@ -157,8 +199,7 @@ export default function StoaHome({ onBuild }) {
             transition: 'all 1s cubic-bezier(.16,1,.3,1)',
             transitionDelay: '1.5s',
           }}>
-            Full-stack platforms for businesses that want more than a website.<br />
-            Storefronts. Admin dashboards. AI tools. Built fast. Built beautiful.
+            <E id="hero-sub">Full-stack platforms for businesses that want more than a website. Storefronts. Admin dashboards. AI tools. Built fast. Built beautiful.</E>
           </p>
           <div style={{
             ...hero.actions,
@@ -201,12 +242,11 @@ export default function StoaHome({ onBuild }) {
             <div style={sec.tag}>WHAT WE BUILD</div>
           </Reveal>
           <Reveal delay={100}>
-            <h2 style={sec.h2}>Not websites.<br /><em style={{ fontStyle: 'italic', color: '#D4AF37' }}>Platforms.</em></h2>
+            <h2 style={sec.h2}><E id="build-h2">Not websites. Platforms.</E></h2>
           </Reveal>
           <Reveal delay={200}>
             <p style={sec.sub}>
-              A website tells people about your business. A platform runs it. We build the whole thing —
-              the storefront your customers see, the admin dashboard your team uses, and the AI tools that make both better.
+              <E id="build-sub">A website tells people about your business. A platform runs it. We build the whole thing — the storefront your customers see, the admin dashboard your team uses, and the AI tools that make both better.</E>
             </p>
           </Reveal>
           <div style={sec.threeCol}>
@@ -239,7 +279,7 @@ export default function StoaHome({ onBuild }) {
           </Reveal>
           <Reveal delay={100}>
             <h2 style={{ ...sec.h2, color: '#fff', textShadow: '0 4px 20px rgba(0,0,0,0.8)' }}>
-              Click the pencil.<br />Edit your site.
+              <E id="edit-h2">Click the pencil. Edit your site.</E>
             </h2>
           </Reveal>
           <Reveal delay={200}>
@@ -255,7 +295,7 @@ export default function StoaHome({ onBuild }) {
       <section id="work" style={{ ...sec.wrap, padding: '100px 48px' }}>
         <div style={sec.inner}>
           <Reveal><div style={sec.tag}>OUR WORK</div></Reveal>
-          <Reveal delay={100}><h2 style={sec.h2}>Platforms We've Built</h2></Reveal>
+          <Reveal delay={100}><h2 style={sec.h2}><E id="work-h2">Platforms We've Built</E></h2></Reveal>
           <Reveal delay={200}>
             <p style={sec.sub}>
               Each one is a complete platform — not a landing page, not a template. Real working software with storefronts, admin dashboards, and AI tools.
@@ -414,7 +454,7 @@ export default function StoaHome({ onBuild }) {
       <section id="about" style={sec.wrap}>
         <div style={sec.inner}>
           <Reveal><div style={sec.tag}>WHO WE ARE</div></Reveal>
-          <Reveal delay={100}><h2 style={sec.h2}>Built by Two. Powered by AI.</h2></Reveal>
+          <Reveal delay={100}><h2 style={sec.h2}><E id="about-h2">Built by Two. Powered by AI.</E></h2></Reveal>
           <Reveal delay={200}>
             <p style={{ ...sec.sub, maxWidth: 540 }}>
               STOA is Tovah and Saleem — a designer and an engineer who build full platforms with AI.
@@ -466,10 +506,96 @@ export default function StoaHome({ onBuild }) {
       {/* ════ FOOTER ════ */}
       <footer style={foot.wrap}>
         <img src="/images/logo.png" alt="STOA" style={foot.logo} />
-        <div style={foot.name}>STOA</div>
-        <div style={foot.tagline}>THE SELLER'S PLATFORM</div>
+        <E id="footer-name" tag="div" style={foot.name}>STOA</E>
+        <E id="footer-tagline" tag="div" style={foot.tagline}>THE SELLER'S PLATFORM</E>
         <div style={foot.copy}>© 2026 Get Stoa LLC · Scottsdale, AZ</div>
       </footer>
+
+      {/* ════ FLOATING PENCIL TOOLBAR ════ */}
+      <div style={{
+        position: 'fixed', bottom: 24, right: 24, zIndex: 300,
+        display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8,
+      }}>
+        {/* Color picker */}
+        {showColorPicker && (
+          <div style={{
+            background: 'rgba(4,4,12,0.95)', backdropFilter: 'blur(20px)',
+            borderRadius: 16, padding: '16px', boxShadow: '0 8px 40px rgba(0,0,0,0.5)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            animation: 'fadeIn 0.2s ease',
+          }}>
+            <div style={{ fontFamily: "'JetBrains Mono'", fontSize: 9, letterSpacing: '0.15em', color: '#666', marginBottom: 10 }}>BRAND COLOR</div>
+            <div style={{ display: 'flex', gap: 6, marginBottom: 10, flexWrap: 'wrap', maxWidth: 160 }}>
+              {['#D4AF37','#E1306C','#0369A1','#16A34A','#7C3AED','#111111','#DC6843','#0D9488'].map(c => (
+                <button key={c} onClick={() => setBrandColor(c)} style={{
+                  width: 28, height: 28, borderRadius: '50%', background: c, cursor: 'pointer',
+                  border: brandColor === c ? '2.5px solid #fff' : '2px solid transparent',
+                  transition: 'all 0.15s',
+                }} />
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <input type="color" value={brandColor} onChange={e => setBrandColor(e.target.value)} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid #333', cursor: 'pointer', padding: 2 }} />
+              <span style={{ fontFamily: "'JetBrains Mono'", fontSize: 11, color: '#666' }}>{brandColor}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Toolbar pills */}
+        <div style={{
+          display: 'flex', gap: 6, alignItems: 'center',
+          background: 'rgba(4,4,12,0.95)', backdropFilter: 'blur(20px)',
+          borderRadius: 100, padding: '6px',
+          boxShadow: '0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06)',
+        }}>
+          {editMode && (
+            <>
+              <button onClick={() => setShowColorPicker(!showColorPicker)} style={{
+                width: 32, height: 32, borderRadius: '50%', background: brandColor, cursor: 'pointer',
+                border: '2px solid rgba(255,255,255,0.15)',
+              }} />
+              <button onClick={() => { setEdits({}); localStorage.removeItem(EDIT_KEY) }} style={{
+                padding: '8px 14px', borderRadius: 100, fontFamily: "'Plus Jakarta Sans'",
+                fontSize: 11, color: '#666', background: 'transparent', border: '1px solid #333',
+              }}>Reset</button>
+              <div style={{ width: 1, height: 24, background: '#333' }} />
+            </>
+          )}
+          <button onClick={() => { setEditMode(!editMode); setShowColorPicker(false) }} style={{
+            width: editMode ? 'auto' : 48, height: 48, borderRadius: editMode ? 100 : '50%',
+            padding: editMode ? '0 20px' : 0,
+            background: editMode ? brandColor : 'rgba(255,255,255,0.08)',
+            border: editMode ? 'none' : '1px solid rgba(255,255,255,0.12)',
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            transition: 'all 0.25s cubic-bezier(.16,1,.3,1)',
+            boxShadow: editMode ? `0 0 20px ${brandColor}40` : 'none',
+          }}>
+            {editMode ? (
+              <span style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: 13, fontWeight: 600, color: '#000' }}>✓ Done Editing</span>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round">
+                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Edit mode banner */}
+      {editMode && (
+        <div style={{
+          position: 'fixed', top: 80, left: '50%', transform: 'translateX(-50%)', zIndex: 250,
+          padding: '8px 24px', borderRadius: 100,
+          background: 'rgba(4,4,12,0.9)', backdropFilter: 'blur(20px)',
+          border: `1px solid ${brandColor}30`,
+          fontFamily: "'JetBrains Mono'", fontSize: 11, letterSpacing: '0.1em', color: brandColor,
+          boxShadow: `0 4px 20px ${brandColor}20`,
+          animation: 'fadeIn 0.3s ease',
+        }}>
+          ✎ EDIT MODE — Click any highlighted text to change it
+        </div>
+      )}
     </>
   )
 }
