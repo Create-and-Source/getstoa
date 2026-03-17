@@ -209,7 +209,7 @@ export default function StoaHome({ onBuild }) {
             transition: 'all 1s cubic-bezier(.16,1,.3,1)',
             transitionDelay: '1.8s',
           }}>
-            <button onClick={onBuild} style={hero.btnPrimary}>Build Your Platform</button>
+            <a href="#features" style={hero.btnPrimary}>See What We Build</a>
             <a href="#contact" style={hero.btnGhost}>Book a Demo</a>
           </div>
         </div>
