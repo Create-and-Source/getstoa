@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import LazyVideo from '../components/LazyVideo'
+import FeatureShowcase from '../components/FeatureShowcase'
 
 const V = 'https://ssdozdtdcrkaoayzhrsa.supabase.co/storage/v1/object/public/videos/'
 
@@ -270,6 +271,9 @@ export default function StoaHome({ onBuild }) {
           </div>
         </div>
       </section>
+
+      {/* ════ FEATURE SHOWCASE — LIVE DEMOS ════ */}
+      <FeatureShowcase />
 
       {/* ════ VIDEO BREAK — "EDIT EVERYTHING" ════ */}
       <VideoSection src={V + 'nebula.mp4'}>
