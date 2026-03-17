@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import './App.css'
+import Stars from './components/Stars'
 import Sidebar from './components/Sidebar'
 import TopBar from './components/TopBar'
 import EditHighlight from './components/EditHighlight'
@@ -45,6 +46,7 @@ export default function App() {
 
   return (
     <div style={styles.app}>
+      {!isAdmin && <Stars />}
       <Sidebar
         pages={PAGES}
         active={page}
