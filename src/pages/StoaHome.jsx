@@ -47,8 +47,8 @@ const vs = {
   wrap: { position: 'relative', minHeight: 500, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   clip: { position: 'absolute', inset: 0, pointerEvents: 'none' },
   video: { width: '100%', height: '100%', objectFit: 'cover' },
-  overlayTop: { position: 'absolute', top: 0, left: 0, right: 0, height: 160, background: 'linear-gradient(to bottom, #04040c, transparent)', zIndex: 2, pointerEvents: 'none' },
-  overlayBottom: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 160, background: 'linear-gradient(to top, #04040c, transparent)', zIndex: 2, pointerEvents: 'none' },
+  overlayTop: { position: 'absolute', top: 0, left: 0, right: 0, height: 160, background: 'linear-gradient(to bottom, var(--bg), transparent)', zIndex: 2, pointerEvents: 'none' },
+  overlayBottom: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 160, background: 'linear-gradient(to top, var(--bg), transparent)', zIndex: 2, pointerEvents: 'none' },
   overlay: { position: 'absolute', inset: 0, background: 'rgba(4,4,12,0.35)', zIndex: 1 },
   content: { position: 'relative', zIndex: 3, width: '100%', maxWidth: 1200, margin: '0 auto', padding: '80px 48px' },
 }
@@ -64,10 +64,10 @@ function Nav() {
   return (
     <nav style={{
       ...navS.bar,
-      background: scrolled ? 'rgba(4,4,12,0.88)' : 'transparent',
+      background: scrolled ? 'rgba(250,250,248,0.95)' : 'transparent',
       backdropFilter: scrolled ? 'blur(28px) saturate(1.6)' : 'none',
       WebkitBackdropFilter: scrolled ? 'blur(28px) saturate(1.6)' : 'none',
-      borderBottomColor: scrolled ? 'rgba(22,22,42,0.6)' : 'transparent',
+      borderBottomColor: scrolled ? 'rgba(0,0,0,0.06)' : 'transparent',
     }}>
       <div style={navS.inner}>
         <div style={navS.brand}>
@@ -91,7 +91,7 @@ const navS = {
   logo: { width: 32, height: 32, objectFit: 'contain' },
   brandText: { fontFamily: "'Playfair Display', serif", fontSize: 16, fontWeight: 600, color: '#D4AF37', letterSpacing: '0.15em' },
   links: { display: 'flex', gap: 32 },
-  link: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#908D9A', transition: 'color 0.25s', cursor: 'pointer' },
+  link: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#666', transition: 'color 0.25s', cursor: 'pointer' },
   cta: { padding: '10px 24px', background: 'linear-gradient(135deg, #D4AF37, #E5C76B)', color: '#000', fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', borderRadius: 100, boxShadow: '0 0 20px rgba(212,175,55,0.2)' },
 }
 
@@ -656,25 +656,25 @@ const hero = {
 }
 
 const marq = {
-  wrap: { overflow: 'hidden', borderTop: '1px solid rgba(212,175,55,0.08)', borderBottom: '1px solid rgba(212,175,55,0.08)', background: 'rgba(212,175,55,0.02)', padding: '18px 0' },
+  wrap: { overflow: 'hidden', borderTop: '1px solid rgba(212,175,55,0.1)', borderBottom: '1px solid rgba(212,175,55,0.1)', background: 'rgba(212,175,55,0.03)', padding: '18px 0' },
   track: { display: 'flex', width: 'max-content', animation: 'marquee 30s linear infinite' },
   set: { display: 'flex', alignItems: 'center', gap: 32, paddingRight: 32 },
   item: { fontFamily: "'JetBrains Mono', monospace", fontSize: 12, letterSpacing: '0.15em', color: '#D4AF37', whiteSpace: 'nowrap', textTransform: 'uppercase' },
-  dot: { color: '#D4AF3740', fontSize: 12 },
+  dot: { color: 'rgba(212,175,55,0.3)', fontSize: 12 },
 }
 
 const sec = {
   wrap: { padding: '100px 48px' },
   inner: { maxWidth: 1000, margin: '0 auto', textAlign: 'center' },
   tag: { fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: '0.25em', color: '#D4AF37', marginBottom: 16, textAlign: 'center' },
-  h2: { fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 400, lineHeight: 1.15, color: '#F0EDE6', margin: '0 0 16px', textAlign: 'center' },
-  sub: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, lineHeight: 1.7, color: '#908D9A', maxWidth: 520, margin: '0 auto 48px', textAlign: 'center' },
+  h2: { fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 400, lineHeight: 1.15, color: 'var(--text)', margin: '0 0 16px', textAlign: 'center' },
+  sub: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, lineHeight: 1.7, color: 'var(--text2)', maxWidth: 520, margin: '0 auto 48px', textAlign: 'center' },
   threeCol: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, maxWidth: 900, margin: '0 auto', textAlign: 'left' },
-  col: { background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,175,55,0.08)', borderRadius: 20, padding: 28 },
+  col: { background: '#fff', border: '1px solid var(--border)', borderRadius: 20, padding: 28 },
   colIcon: { fontSize: 28, color: '#D4AF37', marginBottom: 16, filter: 'drop-shadow(0 0 8px rgba(212,175,55,0.3))' },
-  colTitle: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 18, fontWeight: 700, color: '#F0EDE6', marginBottom: 16 },
+  colTitle: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 18, fontWeight: 700, color: 'var(--text)', marginBottom: 16 },
   colList: { listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 10 },
-  colItem: { fontSize: 14, color: '#908D9A', display: 'flex', alignItems: 'center', gap: 8 },
+  colItem: { fontSize: 14, color: 'var(--text2)', display: 'flex', alignItems: 'center', gap: 8 },
   colCheck: { color: '#D4AF37', fontSize: 10 },
 }
 
@@ -683,12 +683,12 @@ const work = {
   cardLeft: { flex: '1 1 400px', minWidth: 300 },
   cardRight: { flex: '1 1 400px', minWidth: 300 },
   cardTag: { fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.2em', color: '#D4AF37', marginBottom: 8 },
-  cardTitle: { fontFamily: "'Playfair Display', serif", fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: 400, color: '#F0EDE6', margin: '0 0 12px' },
-  cardDesc: { fontSize: 15, lineHeight: 1.7, color: '#908D9A', marginBottom: 16 },
+  cardTitle: { fontFamily: "'Playfair Display', serif", fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: 400, color: 'var(--text)', margin: '0 0 12px' },
+  cardDesc: { fontSize: 15, lineHeight: 1.7, color: 'var(--text2)', marginBottom: 16 },
   chipRow: { display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 20 },
   chip: { fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.05em', padding: '5px 10px', borderRadius: 100, background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.12)', color: '#D4AF37' },
   cardLink: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 14, fontWeight: 600, color: '#D4AF37', display: 'inline-flex', alignItems: 'center', gap: 4 },
-  browser: { borderRadius: 12, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' },
+  browser: { borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' },
   browserBar: { background: '#1a1a2e', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 10 },
   browserDots: { display: 'flex', gap: 5, '& span': {} },
   browserUrl: { fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: '#666', flex: 1, textAlign: 'center' },
@@ -698,10 +698,10 @@ const work = {
 
 const about = {
   row: { display: 'flex', gap: 24, justifyContent: 'center', marginTop: 40 },
-  card: { background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,175,55,0.1)', borderRadius: 20, padding: '32px 40px', textAlign: 'center', minWidth: 180 },
+  card: { background: '#fff', border: '1px solid var(--border)', borderRadius: 20, padding: '32px 40px', textAlign: 'center', minWidth: 180 },
   avatar: { width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #D4AF37, #E5C76B)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 600, color: '#000', margin: '0 auto 12px', fontFamily: "'Playfair Display', serif" },
-  name: { fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 500, color: '#F0EDE6', marginBottom: 4 },
-  role: { fontSize: 13, color: '#5C5870' },
+  name: { fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 500, color: 'var(--text)', marginBottom: 4 },
+  role: { fontSize: 13, color: 'var(--text2)' },
 }
 
 const cta = {
@@ -712,9 +712,9 @@ const cta = {
 }
 
 const foot = {
-  wrap: { padding: '64px 48px 48px', textAlign: 'center', borderTop: '1px solid rgba(212,175,55,0.06)' },
+  wrap: { padding: '64px 48px 48px', textAlign: 'center', background: 'var(--bg2)', borderTop: '1px solid var(--border)' },
   logo: { width: 48, height: 48, objectFit: 'contain', margin: '0 auto 12px', opacity: 0.6 },
   name: { fontFamily: "'Playfair Display', serif", fontSize: 16, fontWeight: 600, color: '#D4AF37', letterSpacing: '0.15em', marginBottom: 4 },
-  tagline: { fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.25em', color: '#333', marginBottom: 24 },
-  copy: { fontSize: 12, color: '#222' },
+  tagline: { fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.25em', color: 'var(--muted)', marginBottom: 24 },
+  copy: { fontSize: 12, color: 'var(--muted)' },
 }
