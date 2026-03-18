@@ -5,6 +5,7 @@ import Stars from './components/Stars'
 import StoaHome from './pages/StoaHome'
 
 const MedSpaDemoApp = lazy(() => import('./demos/medspa/MedSpaDemoApp'))
+const MuseumDemo = lazy(() => import('./pages/MuseumDemo'))
 
 export default function App() {
   const location = useLocation()
@@ -15,6 +16,7 @@ export default function App() {
       <Suspense fallback={<div style={{ padding: 60, textAlign: 'center', color: '#999' }}>Loading demo...</div>}>
         <Routes>
           <Route path="/demo/medspa/*" element={<MedSpaDemoApp />} />
+          <Route path="/demo/museum" element={<MuseumDemo />} />
         </Routes>
       </Suspense>
     )

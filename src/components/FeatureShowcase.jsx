@@ -17,7 +17,7 @@ export default function FeatureShowcase() {
       label: "I'm a Museum / Nonprofit",
       icon: '✦',
       desc: 'Gift shop with 67 products, event tickets, POS, donations with fundraising progress, volunteer portal, AI design studio',
-      path: null, // coming soon
+      path: '/demo/museum',
       pages: '22 pages',
     },
   ]
